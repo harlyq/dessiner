@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <script src="turtle.js" type="text/javascript"></script>
+    <script src="genetic.js" type="text/javascript"></script>
+    <script>
+    function runGenetic() {
+
+    }
+
+    window.addEventListener('load', function(e) {
+        var commandsElem = document.getElementById('commands');
+        var turtle = new Turtle(document.getElementById('canvas'));
+
+        document.getElementById('submit').addEventListener('click', function(e) {
+            turtle.clear();
+            turtle.draw(commandsElem.value);
+        });
+
+        var helloWorld = 'hello world';
+        var scoreFunc = function(a) {
+            var score = 0;
+            var max = Math.max(a.length, helloWorld.length);
+
+            for (var i = 0; i < max; ++i) {
+                var ac = (i < a.length ? a.charCodeAt(i) : 0);
+                var bc = (i < helloWorld.length ? helloWorld.charCodeAt(i) : 0);
+                var diff = ac - bc;
+                score += diff * diff;
+            }
+
+            return score;
+        };
+
+        var genetic = new Genetic(18, helloWorld.length, ' abcdefghijklmnopqrstuvwxyz', true);
+        genetic.elitism = 0.5;
+        genetic.mating = 0.5;
+
+        var generateCount = 0;
+        var outputGenetic = function() {
+            var outputElem = document.getElementById('genetic');
+            var htmlStr = 'Iteration: ' + generateCount + '<br>';
+
+            for (i = 0; i < genetic.genes.length; ++i) {
+                var gene = genetic.genes[i];
+                htmlStr += gene + '   (' + scoreFunc(gene) + ')<br>';
+            }
+
+            outputElem.innerHTML = htmlStr;
+        };
+
+        var generateGenetic = function() {
+            ++generateCount;
+            var bestScore = genetic.generate(scoreFunc);
+            outputGenetic();
+
+            if (bestScore !== 0)
+                setTimeout(generateGenetic, 0);
+        }
+
+        document.getElementById('generate').addEventListener('click', function(e) {
+            generateGenetic();
+        });
+
+        outputGenetic();
+    });
+    </script>
+
+    <style>
+    #canvas {
+        border: 1px solid blue;
+    }
+    </style>
+</head>
+
+<body>
+    <textarea id="commands"></textarea>
+    <button id="submit">Submit</button>
+    <div></div>
+    <canvas id="canvas" width="400" height="400"></canvas>
+    <div></div>
+    <div id="genetic"></div>
+    <button id="generate">Generate</button>
+</body>
+
+</html>
