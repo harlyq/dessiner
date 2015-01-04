@@ -11,7 +11,7 @@ function Genetic(population, startLength, alphabet, isFixedLength) {
     this.alphabet = alphabet;
     this.isFixedLength = isFixedLength;
     this.elitism = 0.4; // percentage of population kept from the last generation
-    this.mutation = 0.01; // chance of mutation
+    this.mutation = 0.1; // chance of mutation
     this.mating = 0.5; // size of the population needed for mating
     this.genes = [];
 

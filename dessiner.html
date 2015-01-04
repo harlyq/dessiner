@@ -4,12 +4,10 @@
 <head>
     <script src="turtle.js" type="text/javascript"></script>
     <script src="genetic.js" type="text/javascript"></script>
+    <script src="lsystem.js" type="text/javascript"></script>
     <script>
-    function runGenetic() {
-
-    }
-
     window.addEventListener('load', function(e) {
+        // ** turtle **
         var commandsElem = document.getElementById('commands');
         var turtle = new Turtle(document.getElementById('canvas'));
 
@@ -33,6 +31,7 @@
             return score;
         };
 
+        // ** genetic **
         var genetic = new Genetic(18, helloWorld.length, ' abcdefghijklmnopqrstuvwxyz', true);
         genetic.elitism = 0.5;
         genetic.mating = 0.5;
@@ -64,6 +63,27 @@
         });
 
         outputGenetic();
+
+        // ** lsystem **
+        var lsystem = new LSystem(rules);
+        lsystem
+            .addRule('a', 'ab')
+            .addRule('b', 'a')
+            .addRule('c<z(0.5)>c', 'd')
+            .addRule('d<e', 'f')
+            .addRule('f>g', 'g')
+            .addRule('h(0.1)', 'b');
+        var lsystemElem = document.getElementById('lsystem');
+
+        document.getElementById('iterate').addEventListener('click', function(e) {
+            lsystemElem.value = lsystem.iterate(lsystemElem.value);
+        });
+
+        var htmlStr = lsystem.join('\n')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/\n/g, '<br/>')
+        document.getElementById('rules').innerHTML = htmlStr;
     });
     </script>
 
@@ -75,13 +95,21 @@
 </head>
 
 <body>
+    <h3>TURTLE</h3>
     <textarea id="commands"></textarea>
     <button id="submit">Submit</button>
     <div></div>
     <canvas id="canvas" width="400" height="400"></canvas>
     <div></div>
+    <h3>GENETIC</h3>
     <div id="genetic"></div>
     <button id="generate">Generate</button>
+    <div></div>
+    <h3>LSYSTEM</h3>
+    <textarea id="lsystem"></textarea>
+    <div id="rules"></div>
+    <button id="iterate">Iterate</button>
+
 </body>
 
 </html>
